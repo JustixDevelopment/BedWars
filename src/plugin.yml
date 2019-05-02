@@ -1,0 +1,10 @@
+name: BedWars
+version: 1.0
+author: Justix
+main: net.dev.bedwars.main.Main
+
+commands:
+      bedwars:
+        aliases: [bw]
+      start:
+      forcemap:
