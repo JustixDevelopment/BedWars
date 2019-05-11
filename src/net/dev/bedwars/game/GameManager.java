@@ -86,6 +86,17 @@ public class GameManager {
 	}
 
 	public static void kickPlayerFromGame(Player p) {
+		p.setGameMode(GameMode.SPECTATOR);
+		p.teleport(teams.get(0).getSpawnLocation());
+		p.setExp(0F);
+		p.getInventory().clear();
+		p.getInventory().setArmorContents(null);
+		
+		for (Player all : Bukkit.getOnlinePlayers()) {
+			if(inGame.contains(all.getUniqueId()))
+				all.hidePlayer(p);
+		}
+		
 		BedWarsTeam team = getTeam(p);
 		team.removeMember(p);
 		
