@@ -4,14 +4,22 @@ import org.bukkit.Bukkit;
 
 public class Utils {
 
-	public static String prefix;
+	private String prefix;
 	
-	public static void sendConsole(String msg) {
+	public void sendConsole(String msg) {
 		Bukkit.getConsoleSender().sendMessage(prefix + msg);
 	}
 	
-	public static void broadcastMessage(String msg) {
+	public void broadcastMessage(String msg) {
 		Bukkit.getOnlinePlayers().forEach(all -> all.sendMessage(msg));
+	}
+	
+	public String getPrefix() {
+		return prefix;
+	}
+	
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
 	}
 
 }

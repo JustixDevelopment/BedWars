@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.material.Bed;
 import org.bukkit.scoreboard.Team;
 
-import net.dev.bedwars.utils.GameFileUtils;
+import net.dev.bedwars.BedWars;
 
 public class BedWarsTeam {
 
@@ -105,7 +105,9 @@ public class BedWarsTeam {
 	}
 	
 	public void placeBed() {
-		BlockFace face = GameFileUtils.getBedFacing(GameManager.map, "Bed" + teamName.toUpperCase());
+		BedWars bedWars = BedWars.getInstance();
+		
+		BlockFace face = bedWars.getGameFileUtils().getBedFacing(bedWars.getGameManager().getMap(), "Bed" + teamName.toUpperCase());
 		
 		if(bedBottom != null) {
 			Block b = bedBottom.getBlock();
@@ -133,12 +135,15 @@ public class BedWarsTeam {
 	}
 	
 	public void addMember(Player p) {
+		BedWars bedWars = BedWars.getInstance();
+		ScoreboardUtils scoreboardUtils = bedWars.getScoreboardUtils();
+		
 		if(!(isTeamMember(p))) {
-			for (BedWarsTeam team : GameManager.teams)
+			for (BedWarsTeam team : bedWars.getGameManager().getTeams())
 				team.removeMember(p);
 			
-			if(ScoreboardUtils.scoreboards.containsKey(p.getName())) {
-				Team t = ScoreboardUtils.scoreboards.get(p.getName()).getTeam("10NONE");
+			if(scoreboardUtils.getScoreboards().containsKey(p.getName())) {
+				Team t = scoreboardUtils.getScoreboards().get(p.getName()).getTeam("10NONE");
 				
 				if(t.hasEntry(p.getName()))
 					t.removeEntry(p.getName());
@@ -149,11 +154,13 @@ public class BedWarsTeam {
 	}
 	
 	public void removeMember(Player p) {
+		ScoreboardUtils scoreboardUtils = BedWars.getInstance().getScoreboardUtils();
+		
 		if(isTeamMember(p)) {
 			members.remove(p.getUniqueId());
 			
-			if(ScoreboardUtils.scoreboards.containsKey(p.getName())) {
-				Team t = ScoreboardUtils.scoreboards.get(p.getName()).getTeam("0" + scoreboardCount + teamName);
+			if(scoreboardUtils.getScoreboards().containsKey(p.getName())) {
+				Team t = scoreboardUtils.getScoreboards().get(p.getName()).getTeam("0" + scoreboardCount + teamName);
 						
 				if(t.hasEntry(p.getName()))
 					t.removeEntry(p.getName());

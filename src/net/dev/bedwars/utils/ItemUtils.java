@@ -15,7 +15,7 @@ import org.bukkit.potion.PotionEffectType;
 
 public class ItemUtils {
 
-	public static ItemStack createItem(Material mat, int amount, String displayName, String... lore) {
+	public ItemStack createItem(Material mat, int amount, String displayName, String... lore) {
 		ItemStack is = new ItemStack(mat, amount);
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName(displayName);
@@ -25,7 +25,7 @@ public class ItemUtils {
 		return is;
 	}
 	
-	public static ItemStack createItem(Material mat, int amount, int metaData, String displayName, String... lore) {
+	public ItemStack createItem(Material mat, int amount, int metaData, String displayName, String... lore) {
 		ItemStack is = new ItemStack(mat, amount, (byte) metaData);
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName(displayName);
@@ -35,7 +35,7 @@ public class ItemUtils {
 		return is;
 	}
 	
-	public static ItemStack createItem(Material mat, String displayName, String... lore) {
+	public ItemStack createItem(Material mat, String displayName, String... lore) {
 		ItemStack is = new ItemStack(mat);
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName(displayName);
@@ -45,7 +45,7 @@ public class ItemUtils {
 		return is;
 	}
 	
-	public static ItemStack createItem(Material mat, int amount, String displayName, boolean hasEnchants) {
+	public ItemStack createItem(Material mat, int amount, String displayName, boolean hasEnchants) {
 		ItemStack i = new ItemStack(mat, amount);
 		ItemMeta m = i.getItemMeta();
 		m.setDisplayName(displayName);
@@ -59,7 +59,7 @@ public class ItemUtils {
 		return i;
 	}
 	
-	public static ItemStack createLeatherItem(Material mat, int amount, String displayName, Color color, String... lore) {
+	public ItemStack createLeatherItem(Material mat, int amount, String displayName, Color color, String... lore) {
 		ItemStack i = new ItemStack(mat, amount);
 		LeatherArmorMeta m = (LeatherArmorMeta) i.getItemMeta();
 		m.setDisplayName(displayName);
@@ -70,7 +70,7 @@ public class ItemUtils {
 		return i;
 	}
 	
-	public static ItemStack createPotion(int amount, String displayName, PotionEffectType type, int duration, int amplifier, String... lore) {
+	public ItemStack createPotion(int amount, String displayName, PotionEffectType type, int duration, int amplifier, String... lore) {
 		ItemStack i = new ItemStack(Material.getMaterial(373), amount);
 		PotionMeta m = (PotionMeta) i.getItemMeta();
 		m.setDisplayName(displayName);
@@ -81,7 +81,7 @@ public class ItemUtils {
 		return i;
 	}
 
-	public static ItemStack addEnchantment(ItemStack item, Enchantment ench, int amplifier) {
+	public ItemStack addEnchantment(ItemStack item, Enchantment ench, int amplifier) {
 		ItemMeta m = item.getItemMeta();
 		m.addEnchant(ench, amplifier, true);
 		item.setItemMeta(m);
@@ -89,7 +89,7 @@ public class ItemUtils {
 		return item;
 	}
 
-	public static ItemStack resetLore(ItemStack item) {
+	public ItemStack resetLore(ItemStack item) {
 		ItemMeta m = item.getItemMeta();
 		m.setLore(new ArrayList<String>());
 		item.setItemMeta(m);

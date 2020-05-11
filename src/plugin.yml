@@ -1,7 +1,7 @@
 name: BedWars
 version: 1.0
 author: Justix
-main: net.dev.bedwars.main.Main
+main: net.dev.bedwars.BedWars
 
 commands:
       bedwars:

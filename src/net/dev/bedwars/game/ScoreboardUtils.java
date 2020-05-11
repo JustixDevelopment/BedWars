@@ -10,13 +10,16 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
-import net.dev.bedwars.utils.FileUtils;
+import net.dev.bedwars.BedWars;
 
 public class ScoreboardUtils {
 
-	public static HashMap<String, Scoreboard> scoreboards = new HashMap<>();
+	private HashMap<String, Scoreboard> scoreboards = new HashMap<>();
 	
-	public static void updateScoreboard() {
+	public void updateScoreboard() {
+		BedWars bedWars = BedWars.getInstance();
+		GameManager gameManager = bedWars.getGameManager();
+		
 		for (Player all : Bukkit.getOnlinePlayers()) {
 			if(all.isOnline()) {
 				if(!(scoreboards.containsKey(all.getName())))
@@ -24,37 +27,39 @@ public class ScoreboardUtils {
 				
 				Scoreboard sb = scoreboards.get(all.getName());
 				
-				if(GameManager.isRunning) {
+				if(gameManager.isRunning()) {
 					int i = 0;
 					
-					for (BedWarsTeam team : GameManager.teams) {
+					for (BedWarsTeam team : gameManager.getTeams()) {
 						sb.getTeam("" + i).setPrefix(team.getBedSymbol() + " ");
 						sb.getObjective(DisplaySlot.SIDEBAR).getScore("§" + i).setScore(team.getMembers().size());
 						
 						i++;
 					}
-				} else if(!(GameManager.isEnding)) {
-					sb.getTeam("e").setPrefix("§8» §e" + GameManager.map);
-					sb.getTeam("e").setSuffix(" §7(" + FileUtils.getConfigString("Settings.GameFormat") + ")");
-					sb.getTeam("b").setPrefix("§8» §e" + Bukkit.getOnlinePlayers().size() + "§7/§e" + (GameManager.teams.size() * GameManager.teams.get(0).getTeamSize()));
+				} else if(!(gameManager.isEnding())) {
+					sb.getTeam("e").setPrefix("§8» §e" + gameManager.getMap());
+					sb.getTeam("e").setSuffix(" §7(" + bedWars.getFileUtils().getConfigString("Settings.GameFormat") + ")");
+					sb.getTeam("b").setPrefix("§8» §e" + Bukkit.getOnlinePlayers().size() + "§7/§e" + (gameManager.getTeams().size() * gameManager.getTeams().get(0).getTeamSize()));
 				}
 				
-				for (BedWarsTeam team : GameManager.teams) {
+				for (BedWarsTeam team : gameManager.getTeams()) {
 					Team t = sb.getTeam("0" + team.getScoreboardCount() + team.getTeamName());
 					
 					for (UUID uuid : team.getMembers()) {
 						Player target = Bukkit.getPlayer(uuid);
 						
-						if(!(t.hasEntry(target.getName()))) {
-							t.addEntry(target.getName());
-							
-							target.setDisplayName(t.getPrefix() + target.getName() + t.getSuffix());
+						if(target != null) {
+							if(!(t.hasEntry(target.getName()))) {
+								t.addEntry(target.getName());
+								
+								target.setDisplayName(t.getPrefix() + target.getName() + t.getSuffix());
+							}
 						}
 					}
 				}
 				
 				for (Player all2 : Bukkit.getOnlinePlayers()) {
-					if(GameManager.getTeam(all2) == null) {
+					if(gameManager.getTeam(all2) == null) {
 						Team t = sb.getTeam("10NONE");
 						
 						if(!(t.hasEntry(all2.getName()))) {
@@ -69,20 +74,23 @@ public class ScoreboardUtils {
 		}
 	}
 
-	private static void setScoreboard(Player p) {
+	private void setScoreboard(Player p) {
+		BedWars bedWars = BedWars.getInstance();
+		GameManager gameManager = bedWars.getGameManager();
+		
 		Scoreboard sb = Bukkit.getScoreboardManager().getNewScoreboard();
 		Objective o = sb.registerNewObjective("BedWars", "Scoreboard");
 
 		o.setDisplayName("§b§lBEDWARS");
 		o.setDisplaySlot(DisplaySlot.SIDEBAR);
 		
-		if(GameManager.isRunning) {
+		if(gameManager.isRunning()) {
 			registerNewTeam(sb, "r", "§r", "§r", "§r");
-			o.getScore("§r").setScore(GameManager.teams.get(0).getTeamSize() + 1);
+			o.getScore("§r").setScore(gameManager.getTeams().get(0).getTeamSize() + 1);
 			
 			int i = 0;
 			
-			for (BedWarsTeam team : GameManager.teams) {
+			for (BedWarsTeam team : gameManager.getTeams()) {
 				registerNewTeam(sb, "" + i, team.getBedSymbol() + " ", team.getColor() + team.getTeamName(), "§" + i);
 				o.getScore("§" + i).setScore(team.getMembers().size());
 				
@@ -95,7 +103,7 @@ public class ScoreboardUtils {
 			registerNewTeam(sb, "b", "§7Gold§8:", "§b", "§b");
 			o.getScore("§b").setScore(-2);
 			
-			registerNewTeam(sb, "c", GameManager.spawnGold ? "§aAn" : "§cAus", "§c", "§c");
+			registerNewTeam(sb, "c", gameManager.isSpawnGold() ? "§aAn" : "§cAus", "§c", "§c");
 			o.getScore("§c").setScore(-3);
 			
 			registerNewTeam(sb, "d", "§d", "§d", "§d");
@@ -104,7 +112,7 @@ public class ScoreboardUtils {
 			registerNewTeam(sb, "f", "§7Map", "§f", "§f");
 			o.getScore("§f").setScore(6);
 			
-			registerNewTeam(sb, "e", "§8» §e" + GameManager.map, " §7(" + FileUtils.getConfigString("Settings.GameFormat") + ")", "§e");
+			registerNewTeam(sb, "e", "§8» §e" + gameManager.getMap(), " §7(" + bedWars.getFileUtils().getConfigString("Settings.GameFormat") + ")", "§e");
 			o.getScore("§e").setScore(5);
 			
 			registerNewTeam(sb, "d", "§d", "§d", "§d");
@@ -113,14 +121,14 @@ public class ScoreboardUtils {
 			registerNewTeam(sb, "c", "§7Online", "§c", "§c");
 			o.getScore("§c").setScore(3);
 			
-			registerNewTeam(sb, "b", "§8» §e" + Bukkit.getOnlinePlayers().size() + "§7/§e" + (GameManager.teams.size() * GameManager.teams.get(0).getTeamSize()), "§b", "§b");
+			registerNewTeam(sb, "b", "§8» §e" + Bukkit.getOnlinePlayers().size() + "§7/§e" + (gameManager.getTeams().size() * gameManager.getTeams().get(0).getTeamSize()), "§b", "§b");
 			o.getScore("§b").setScore(2);
 			
 			registerNewTeam(sb, "a", "§a", "§a", "§a");
 			o.getScore("§a").setScore(1);
 		}
 		
-		for (BedWarsTeam team : GameManager.teams) {
+		for (BedWarsTeam team : gameManager.getTeams()) {
 			Team t = sb.registerNewTeam("0" + team.getScoreboardCount() + team.getTeamName());
 			t.setPrefix(team.getPrefix());
 		}
@@ -132,11 +140,19 @@ public class ScoreboardUtils {
 		scoreboards.put(p.getName(), sb);
 	}
 
-	private static void registerNewTeam(Scoreboard sb, String teamName, String prefix, String suffix, String toAdd) {
+	private void registerNewTeam(Scoreboard sb, String teamName, String prefix, String suffix, String toAdd) {
 		Team t = sb.registerNewTeam(teamName);
 		t.setPrefix(prefix);
 		t.setSuffix(suffix);
 		t.addEntry(toAdd);
+	}
+	
+	public HashMap<String, Scoreboard> getScoreboards() {
+		return scoreboards;
+	}
+
+	public void setScoreboards(HashMap<String, Scoreboard> scoreboards) {
+		this.scoreboards = scoreboards;
 	}
 	
 }

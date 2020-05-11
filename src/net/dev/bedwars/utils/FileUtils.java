@@ -5,27 +5,19 @@ import java.io.IOException;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import net.dev.bedwars.game.GameManager;
+import net.dev.bedwars.BedWars;
 
 public class FileUtils {
 
-	public static File folder = new File("plugins/BedWars/");
-	public static File file = new File("plugins/BedWars/config.yml");
-	public static YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+	private File directory, file;
+	private YamlConfiguration cfg;
 	
-	public static void saveFiles() {
-		try {
-			cfg.save(file);
-		} catch (IOException e) {
-		}
+	public FileUtils() {
+		directory = new File("plugins/BedWars/");
+		file = new File("plugins/BedWars/config.yml");
 		
-		Utils.prefix = getConfigString("Messages.Prefix");
-		GameManager.map = getConfigString("Settings.MapName");
-	}
-	
-	public static void setupFiles() {
-		if(!(folder.exists()))
-			folder.mkdir();
+		if(!(directory.exists()))
+			directory.mkdir();
 		
 		if(!(file.exists())) {
 			try {
@@ -34,6 +26,7 @@ public class FileUtils {
 			}
 		}
 		
+		cfg = YamlConfiguration.loadConfiguration(file);
 		cfg.addDefault("Messages.Prefix", "&8[&bBedWars&8] &7");
 		cfg.addDefault("Settings.MapName", "NONE");
 		cfg.addDefault("Settings.GameFormat", "8x1");
@@ -42,8 +35,24 @@ public class FileUtils {
 		saveFiles();
 	}
 	
-	public static String getConfigString(String path) {
+	public void saveFiles() {
+		BedWars bedWars = BedWars.getInstance();
+		
+		try {
+			cfg.save(file);
+		} catch (IOException e) {
+		}
+		
+		bedWars.getUtils().setPrefix(getConfigString("Messages.Prefix"));
+		bedWars.getGameManager().setMap(getConfigString("Settings.MapName").toUpperCase());
+	}
+	
+	public String getConfigString(String path) {
 		return cfg.getString(path).replace("&", "§");
+	}
+	
+	public YamlConfiguration getConfig() {
+		return cfg;
 	}
 	
 }
