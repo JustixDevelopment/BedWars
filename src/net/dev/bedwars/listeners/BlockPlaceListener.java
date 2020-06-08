@@ -28,11 +28,6 @@ public class BlockPlaceListener implements Listener {
 			return;
 		}
 		
-		if(e.getBlockAgainst().getType() != Material.AIR) {
-			e.setCancelled(true);
-			return;
-		}
-		
 		if(e.getBlock().getType() == Material.TNT) {
 			ItemStack item = p.getItemInHand();
 

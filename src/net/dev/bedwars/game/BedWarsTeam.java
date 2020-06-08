@@ -29,7 +29,6 @@ public class BedWarsTeam {
 	private int scoreboardCount;
 	
 	public BedWarsTeam(String teamName, String prefix, String color, Color armorColor, int teamSize, int woolColor, int scoreboardCount) {
-		super();
 		this.teamName = teamName;
 		this.prefix = prefix;
 		this.color = color;
